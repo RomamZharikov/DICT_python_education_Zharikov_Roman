@@ -1,29 +1,40 @@
 import random
-print("""Hello! Welcome to the game Hangman!
-Try to guess the word.""")
 
-index_word = random.randint(0, 3)
 hidden_word = ["python", "java", "javascript", "php"]
-selected_word = hidden_word[index_word]
-word = str()
+random_word = random.choice(hidden_word)
+random_word_set = set(random_word)
+try_wrong = []
+try_word = []
 
-letters = list(selected_word)
-hidden = letters[3:]
-prompt = letters[:3]
-number = len(hidden)
-hidden_letters = []
-car = ["-"]
 
-for x in range(number):
-    hidden_letters = hidden_letters + car
+def lines():
+    for letter in random_word:
+        if letter in try_word:
+            print(letter, end="")
+        else:
+            print("-", end="")
 
-hint = prompt + hidden_letters
-ready_hint = "".join(hint)
 
-while word != selected_word:
-    word = input(ready_hint + ": ")
-    if word == selected_word:
-        print("You survived!")
-    else:
-        print("You lost!")
-        break
+def game():
+    for games in range(8):
+        print("")
+        letter = input("Input a letter:")
+        for i in random_word:
+            if letter == i:
+                try_word.append(letter)
+        if letter not in random_word:
+            print("That letter doesn't appear in the word")
+        print("")
+        lines()
+        if random_word_set == set(try_word):
+            print('')
+            print("You guessed the word!")
+            print("You survived!")
+            print('')
+            break
+
+
+print('HANGMAN')
+print(len(random_word) * '-', end='')
+game()
+print("You lost!")
