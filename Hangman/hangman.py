@@ -16,6 +16,8 @@ def lines():
 
 
 def game():
+    list.clear(try_word)
+    list.clear(try_wrong)
     hp = 8
     while hp > 0:
         print("")
@@ -60,7 +62,14 @@ def game():
             break
 
 
-print('HANGMAN')
+print("HANGMAN")
 while True:
-    print(len(random_word) * '-', end='')
-    game()
+    print("Type 'play' to play the game, 'exit' to quit: ", end="")
+    answer = input()
+    if answer == "play":
+        while True:
+            print(len(random_word) * '-', end='')
+            game()
+            break
+    elif answer == "exit":
+        break
