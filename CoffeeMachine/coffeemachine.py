@@ -1,4 +1,4 @@
-class Stock:
+class CoffeeMachine:
     def __init__(self):
         self.money = 550
         self.cup = 9
@@ -7,10 +7,10 @@ class Stock:
         self.water = 400
 
     def fill(self):
-        self.water += int(input("Write how many ml of water the coffee machine has:\n"))
-        self.milk += int(input("Write how many ml of milk the coffee machine has:\n"))
-        self.coffee += int(input("Write how many g of coffee the coffee machine has:\n"))
-        self.cup += int(input("Write how many g of cup the coffee machine has:\n"))
+        self.water += int(input("Write how many ml of water do you want to add:\n"))
+        self.milk += int(input("Write how many ml of milk do you want to add:\n"))
+        self.coffee += int(input("Write how many g of coffee do you want to add:\n"))
+        self.cup += int(input("Write how many pieces of cup do you want to add:\n"))
 
     def espresso(self):
         if self.water < 250:
@@ -73,7 +73,7 @@ class Stock:
     -{self.money} of money.\n""")
 
 
-objects = Stock()
+objects = CoffeeMachine()
 while True:
     action = str(input("Write action (buy, fill, take, remaining, exit):\n"))
     if action == "buy":
