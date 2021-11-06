@@ -1,49 +1,82 @@
 import math
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--principal", type=int)
+parser.add_argument("--payment", type=int)
+parser.add_argument("--interest", type=float)
+parser.add_argument("--periods", type=int)
+parser.add_argument("--annuity", type=float)
+parser.add_argument("--type", type=str)
+args = parser.parse_args()
 
 
-def n():
-    credit = int(input("Enter the loan principal:\n"))
-    monthly_payment = int(input("Enter the monthly payment:\n"))
-    loan_interest = float(input("Enter the loan interest:\n"))
-    i = (loan_interest * 0.01 / 12)
-    fraction = (monthly_payment / (monthly_payment - i * credit))
-    result_n = math.ceil(math.log(fraction, i+1))
+def n(principal, payment, interest):
+    i = (interest * 0.01 / 12)
+    fraction = (payment / (payment - i * principal))
+    result_n = math.ceil(math.log(fraction, i + 1))
     years = result_n / 12
     month = (years - math.floor(years)) * 12
-    if math.floor(years) != 0:
+    if math.floor(month) != 0:
         print(f"It will take {math.floor(years)} years and {math.ceil(month)} months to repay this loan!\n")
     else:
         print(f"It will take {math.ceil(years)} years to repay this loan!\n")
+    print(f"Overpayment {int(principal * (1 + interest * 0.01 / 0.75) - principal)}")
 
 
-def a():
-    credit = int(input("Enter the loan principal:\n"))
-    period = int(input("Enter the number of periods:\n"))
-    loan_interest = float(input("Enter the loan interest:\n"))
-    i = (loan_interest * 0.01 / 12)
-    num = pow(1 + i, period)
-    result_a = credit * ((i * num) / (num - 1))
+def a(principal, periods, interest):
+    i = (interest * 0.01 / 12)
+    num = pow(1 + i, periods)
+    result_a = principal * ((i * num) / (num - 1))
     print(f"Your monthly payment = {math.ceil(result_a)}!\n")
+    print(f"Overpayment {math.ceil(result_a) * periods - principal}")
 
 
-def p():
-    annuity = float(input("Enter the annuity payment:\n"))
-    period = int(input("Enter the number of periods:\n"))
-    loan_interest = float(input("Enter the loan interest:\n"))
-    i = (loan_interest * 0.01 / 12)
-    num = pow(1 + i, period)
-    result_p = annuity / ((i * num) / (num - 1))
-    print(f"Your loan principal = {math.floor(result_p)}!\n")
+def p(payment, periods, interest):
+    i = (interest * 0.01 / 12)
+    num = pow(1 + i, periods)
+    result_p = math.floor(float(payment / ((i * num) / (num - 1))))
+    print(f"Your loan principal = {result_p}!\n")
+    print(f"Overpayment {payment * periods - result_p}")
 
 
-while True:
-    choice = input(f"""What do you want to calculate?
-    type "n" for number of monthly payments,
-    type "a" for annuity monthly payment amount,
-    type "p" for loan principal:\n""")
-    if choice == "n":
-        n()
-    if choice == "a":
-        a()
-    if choice == "p":
-        p()
+def diff(principal, periods, interest):
+    i = interest * 0.01 / 12
+    month = 0
+    result = 0
+    steps = list(reversed(range(2, periods + 2)))
+    for monthly in steps:
+        monthly -= 1
+        d = math.ceil(principal / periods) + i * ((principal * monthly) / periods)
+        result += d
+        month += 1
+        print(f"Month {month}: payment is {math.ceil(d)}")
+    print(f"Overpayment {math.ceil(result - principal)}")
+
+
+try:
+    if args.type == "annuity":
+        if args.payment is not None and args.principal is not None:
+            if args.principal > 0 and args.payment > 0 and args.interest > 0:
+                n(args.principal, args.payment, args.interest)
+            else:
+                print("Incorrect parameters")
+        elif args.principal is not None and args.periods is not None:
+            if args.principal > 0 and args.periods > 0 and args.interest > 0:
+                a(args.principal, args.periods, args.interest)
+            else:
+                print("Incorrect parameters")
+        elif args.payment is not None:
+            if args.payment > 0 and args.periods > 0 and args.interest > 0:
+                p(args.payment, args.periods, float(args.interest))
+            else:
+                print("Incorrect parameters")
+    elif args.type == "diff":
+        if args.principal > 0 and args.periods > 0 and args.interest > 0:
+            diff(args.principal, args.periods, args.interest)
+        else:
+            print("Incorrect parameters")
+    else:
+        print("Incorrect parameters")
+except TypeError:
+    print("Incorrect parameters")
