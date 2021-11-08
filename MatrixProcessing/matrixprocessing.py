@@ -1,4 +1,5 @@
 import ast
+import copy
 import itertools
 
 
@@ -87,11 +88,35 @@ def transpose_horizontal_line(matrix):
     return result
 
 
+def minor(matrix, i, j):
+    minor_copy = copy.deepcopy(matrix)
+    del minor_copy[i]
+    for i in range(len(matrix[0]) - 1):
+        del minor_copy[i][j]
+    return minor_copy
+
+
+def det(matrix):
+    height = len(matrix)
+    weight = len(matrix[0])
+    if height != weight:
+        return None
+    if weight == 1:
+        return matrix[0][0]
+    signum = 1
+    determinant = 0
+    for j in range(weight):
+        determinant += matrix[0][j]*signum*det(minor(matrix, 0, j))
+        signum *= -1
+    return determinant
+
+
 while True:
     print("""1. Add matrices
 2. Multiply matrix by a constant
 3. Multiply matrices
 4. Transpose matrix
+5. Calculate a determinant
 0. Exit""")
     choice = int(input("Your choice:"))
     if choice == 1:
@@ -158,5 +183,12 @@ while True:
             c = transpose_horizontal_line(a)
             print('The result is:')
             matrix_print(c, m, n)
+    elif choice == 5:
+        m, n = map(int, input("Enter size of matrix:").split())
+        print('Enter matrix:')
+        a = matrix_input(m)
+        c = det(a)
+        print('The result is:')
+        print(c)
     elif choice == 0:
         break
