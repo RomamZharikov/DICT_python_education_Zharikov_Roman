@@ -44,14 +44,23 @@ def distribution():
                 print("Error")
 
 
-while True:
-    remainder, computer_pieces, player_pieces, start, player = distribution()
-    print(f"""Stock pieces: {sorted(remainder)}
-    Computer pieces: {sorted(computer_pieces)}
-    Player pieces: {sorted(player_pieces)}
-    Domino snake: {start}""")
-    if player == 1:
-        print("Status: player")
-    elif player == 0:
-        print("Status: computer")
-    break
+def game():
+    computer_pieces, player_pieces, remainder, start, gamer_index = distribution()
+    print("=" * 70)
+    print(f"""Stock size: {len(remainder)}
+Computer pieces: {len(computer_pieces)}\n""")
+    print(*start)
+    print("\nYour pieces:")
+    num = 1
+    for i in player_pieces:
+        print(f"{num}. {i}")
+        num += 1
+    if gamer_index == 0:
+        choice = int(input("Status: It's your turn to make a move. Enter your command:\n"))
+        print(choice)
+    elif gamer_index == 1:
+        choice = int(input("Computer is about to make a move. Press Enter to continue...\n"))
+        print(choice)
+
+
+game()
