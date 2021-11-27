@@ -1,4 +1,5 @@
 import random
+from itertools import chain
 
 
 def distribution():
@@ -44,23 +45,88 @@ def distribution():
                 print("Error")
 
 
-def game():
-    computer_pieces, player_pieces, remainder, start, gamer_index = distribution()
-    print("=" * 70)
-    print(f"""Stock size: {len(remainder)}
+def dominoes_check(dominoes, win):
+    if dominoes[0][0] == dominoes[0][-1]:
+        dominoes = list(chain(*dominoes))
+        if dominoes.count(dominoes[0]) == 8:
+            print("Status: The game is over. It's a draw!")
+            win += 1
+    return win
+
+
+def game(computer_pieces, player_pieces, remainder, start, gamer_index):
+    win = 0
+    while win == 0:
+        if win == 0:
+            print("=" * 70)
+            print(f"""Stock size: {len(remainder)}
 Computer pieces: {len(computer_pieces)}\n""")
-    print(*start)
-    print("\nYour pieces:")
-    num = 1
-    for i in player_pieces:
-        print(f"{num}. {i}")
-        num += 1
-    if gamer_index == 0:
-        choice = int(input("Status: It's your turn to make a move. Enter your command:\n"))
-        print(choice)
-    elif gamer_index == 1:
-        choice = int(input("Computer is about to make a move. Press Enter to continue...\n"))
-        print(choice)
+            if len(start) > 6:
+                print(*start[:3], "...", *start[-3:])
+            else:
+                print(*start)
+            print("\nYour pieces:")
+            num = 1
+            for i in player_pieces:
+                print(f"{num}. {i}")
+                num += 1
+            if gamer_index == 0:
+                if len(player_pieces) != 0:
+                    while True:
+                        try:
+                            choice = int(input("Status: It's your turn to make a move. Enter your command:\n"))
+                            break
+                        except ValueError:
+                            print("Invalid input. Please try again.")
+                            pass
+                    if 0 < choice <= len(player_pieces) != 0:
+                        start.append(player_pieces[choice - 1])
+                        del player_pieces[player_pieces.index(player_pieces[choice - 1])]
+                        gamer_index += 1
+                    elif choice < 0 and abs(choice) <= len(player_pieces) != 0:
+                        start.insert(0, player_pieces[abs(choice) - 1])
+                        del player_pieces[player_pieces.index(player_pieces[abs(choice) - 1])]
+                        gamer_index += 1
+                    elif choice == 0 and len(remainder) != 0:
+                        player_pieces.append(remainder[random.choice(range(len(remainder) - 1))])
+                        del remainder[remainder.index(player_pieces[-1])]
+                        gamer_index += 1
+                    elif abs(choice) > len(player_pieces) or type(choice) == int and choice != 0:
+                        print("Invalid input. Please try again.")
+                    elif len(computer_pieces) == 0 or choice == 0 and len(remainder) == 0:
+                        print("Status: The computer win!")
+                        win += 1
+                        break
+                else:
+                    win += 1
+                    print("Status: You win!")
+                    break
+            elif gamer_index == 1 and len(player_pieces) != 0:
+                input("Computer is about to make a move. Press Enter to continue...\n")
+                win = dominoes_check(start, win)
+                index = random.choice(range(-len(computer_pieces), len(computer_pieces) + 1))
+                if 0 < index != 0:
+                    start.append(computer_pieces[index - 1])
+                    del computer_pieces[computer_pieces.index(computer_pieces[index - 1])]
+                    gamer_index -= 1
+                elif index < 0 and abs(index) != 0:
+                    start.insert(0, computer_pieces[abs(index) - 1])
+                    del computer_pieces[computer_pieces.index(computer_pieces[abs(index) - 1])]
+                    gamer_index -= 1
+                elif index == 0 and len(remainder) != 0:
+                    computer_pieces.append(remainder[random.choice(range(len(remainder) - 1))])
+                    gamer_index -= 1
+                    del remainder[remainder.index(computer_pieces[-1])]
+                elif len(computer_pieces) == 0 or index == 1 and len(remainder) == 0:
+                    print("Status: The computer win!")
+                    win += 1
+                    gamer_index += 10
+                    break
+            else:
+                if gamer_index == 1 or gamer_index == 0:
+                    print("Status: You win!")
+                break
 
 
-game()
+a, b, c, d, e = distribution()
+game(a, b, c, d, e)
