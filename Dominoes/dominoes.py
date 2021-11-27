@@ -71,60 +71,86 @@ Computer pieces: {len(computer_pieces)}\n""")
                 print(f"{num}. {i}")
                 num += 1
             if gamer_index == 0:
-                if len(player_pieces) != 0:
-                    while True:
-                        try:
-                            choice = int(input("Status: It's your turn to make a move. Enter your command:\n"))
-                            break
-                        except ValueError:
-                            print("Invalid input. Please try again.")
-                            pass
-                    if 0 < choice <= len(player_pieces) != 0:
+                while True:
+                    try:
+                        choice = int(input("Status: It's your turn to make a move. Enter your command:\n"))
+                        break
+                    except ValueError:
+                        print("Illegal move. Please try again.")
+                        pass
+                win = dominoes_check(start, win)
+                if 0 < choice <= len(player_pieces) != 0:
+                    if player_pieces[choice - 1][0] == start[-1][1]:
                         start.append(player_pieces[choice - 1])
                         del player_pieces[player_pieces.index(player_pieces[choice - 1])]
                         gamer_index += 1
-                    elif choice < 0 and abs(choice) <= len(player_pieces) != 0:
+                    elif player_pieces[choice - 1][1] == start[-1][1]:
+                        start.append(player_pieces[choice - 1][::-1])
+                        del player_pieces[player_pieces.index(player_pieces[choice - 1])]
+                        gamer_index += 1
+                    else:
+                        print("Illegal move. Please try again.")
+                elif choice < 0 and abs(choice) <= len(player_pieces) != 0:
+                    if player_pieces[abs(choice) - 1][1] == start[0][0]:
                         start.insert(0, player_pieces[abs(choice) - 1])
                         del player_pieces[player_pieces.index(player_pieces[abs(choice) - 1])]
                         gamer_index += 1
-                    elif choice == 0 and len(remainder) != 0:
-                        player_pieces.append(remainder[random.choice(range(len(remainder) - 1))])
-                        del remainder[remainder.index(player_pieces[-1])]
+                    elif player_pieces[abs(choice) - 1][0] == start[0][0]:
+                        start.insert(0, player_pieces[abs(choice) - 1][::-1])
+                        del player_pieces[player_pieces.index(player_pieces[abs(choice) - 1])]
                         gamer_index += 1
-                    elif abs(choice) > len(player_pieces) or type(choice) == int and choice != 0:
-                        print("Invalid input. Please try again.")
-                    elif len(computer_pieces) == 0 or choice == 0 and len(remainder) == 0:
-                        print("Status: The computer win!")
-                        win += 1
-                        break
+                    else:
+                        print("Illegal move. Please try again.")
+                elif choice == 0 and len(remainder) != 0:
+                    player_pieces.append(remainder[random.choice(range(len(remainder) - 1))])
+                    del remainder[remainder.index(player_pieces[-1])]
+                    gamer_index += 1
+                elif abs(choice) > len(player_pieces):
+                    print("Illegal move. Please try again.")
+                elif len(computer_pieces) == 0 or choice == 0 and len(remainder) == 0:
+                    print("Status: The computer win!")
+                    break
                 else:
                     win += 1
                     print("Status: You win!")
                     break
             elif gamer_index == 1 and len(player_pieces) != 0:
-                input("Computer is about to make a move. Press Enter to continue...\n")
+                print(len(input("Computer is about to make a move. Press Enter to continue...\n")) * "")
                 win = dominoes_check(start, win)
-                index = random.choice(range(-len(computer_pieces), len(computer_pieces) + 1))
-                if 0 < index != 0:
-                    start.append(computer_pieces[index - 1])
-                    del computer_pieces[computer_pieces.index(computer_pieces[index - 1])]
-                    gamer_index -= 1
-                elif index < 0 and abs(index) != 0:
-                    start.insert(0, computer_pieces[abs(index) - 1])
-                    del computer_pieces[computer_pieces.index(computer_pieces[abs(index) - 1])]
-                    gamer_index -= 1
-                elif index == 0 and len(remainder) != 0:
-                    computer_pieces.append(remainder[random.choice(range(len(remainder) - 1))])
-                    gamer_index -= 1
-                    del remainder[remainder.index(computer_pieces[-1])]
-                elif len(computer_pieces) == 0 or index == 1 and len(remainder) == 0:
-                    print("Status: The computer win!")
-                    win += 1
-                    gamer_index += 10
-                    break
+                while True:
+                    index = random.choice(range(-len(computer_pieces), len(computer_pieces) + 1))
+                    if 0 < index <= len(computer_pieces) != 0:
+                        if computer_pieces[index - 1][0] == start[-1][1]:
+                            start.append(computer_pieces[index - 1])
+                            del computer_pieces[computer_pieces.index(computer_pieces[index - 1])]
+                            gamer_index -= 1
+                            break
+                        elif computer_pieces[index - 1][1] == start[-1][1]:
+                            start.append(computer_pieces[index - 1][::-1])
+                            del computer_pieces[computer_pieces.index(computer_pieces[index - 1])]
+                            gamer_index -= 1
+                            break
+                    if index < 0 and abs(index) <= len(computer_pieces) != 0:
+                        if computer_pieces[abs(index) - 1][1] == start[0][0]:
+                            start.insert(0, computer_pieces[abs(index) - 1])
+                            del computer_pieces[computer_pieces.index(computer_pieces[abs(index) - 1])]
+                            gamer_index -= 1
+                            break
+                        elif computer_pieces[abs(index) - 1][0] == start[0][0]:
+                            start.insert(0, computer_pieces[abs(index) - 1][::-1])
+                            del computer_pieces[computer_pieces.index(computer_pieces[abs(index) - 1])]
+                            gamer_index -= 1
+                            break
+                    if index == 0 and len(remainder) != 0:
+                        computer_pieces.append(remainder[random.choice(range(len(remainder) - 1))])
+                        del remainder[remainder.index(computer_pieces[-1])]
+                        gamer_index -= 1
+                        break
+                    elif len(computer_pieces) == 0 or index == 1 and len(remainder) == 0:
+                        print("Status: You win!")
+                        break
             else:
-                if gamer_index == 1 or gamer_index == 0:
-                    print("Status: You win!")
+                print("Status: You win!")
                 break
 
 
