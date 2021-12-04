@@ -13,6 +13,8 @@ if __name__ == "__main__":
                 print(f"There is a draw ({choice_pc}).")
             elif losing.get(choice_pc) == input_player:
                 print(f"Well done. The computer chose {choice_pc} and failed.")
+        elif input_player == "!exit":
+            print("Bye!")
             break
         else:
             print("Invalid input. Please, try again.")
