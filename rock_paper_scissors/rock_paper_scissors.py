@@ -1,9 +1,42 @@
 from random import choice
+from math import floor, ceil
 
-losing = {"rock": "paper", "paper": "scissors", "scissors": "rock"}
 with open("rating.txt", "r", encoding='utf-8') as rating:
     score_table = {i: j for line in rating for i, j in [line.split()]}
     rating.close()
+app = {}
+win = {}
+values = []
+
+
+def game_import():
+    while True:
+        link = input()
+        if 0 == len(link) or len(link) >= 3:
+            break
+        else:
+            print("Please, input >3 values or nothing for base values")
+    if len(link) != 0:
+        link = [*link.split(",")]
+        if len(link) % 2 == 1:
+            for i in range(len(link)):
+                for j in range(((len(link)) - 1) // 2):
+                    values.append(link[i - j - 1])
+                app.update({link[i]: values.copy()})
+                values.clear()
+            return app, None
+        elif len(link) % 2 == 0:
+            for i in range(len(link)):
+                for j in range(floor(((len(link)) - 1) / 2)):
+                    values.append(link[i - 1 - j])
+                app.update({link[i]: values.copy()})
+                values.clear()
+            for i in app.keys():
+                win.update({i: link[ceil(link.index(i) - 1 - (((len(link)) - 1) / 2))]})
+            return app, win
+    else:
+        return {"rock": "paper", "paper": "scissors", "scissors": "rock"}, None
+
 
 if __name__ == "__main__":
     name = input("Enter your name:")
@@ -12,18 +45,24 @@ if __name__ == "__main__":
         score = int(score_table.get(name))
     else:
         score = 0
+    losing, win = game_import()
+    print("Okay, let's start.")
     while True:
         input_player = input()
         if input_player in losing.keys():
             choice_pc = choice(list(losing.keys()))
-            if choice_pc == losing.get(input_player):
-                print(f"Sorry, but the computer chose {choice_pc}.")
-            elif choice_pc == input_player:
+            if choice_pc == input_player:
                 print(f"There is a draw ({choice_pc}).")
                 score += 50
-            elif losing.get(choice_pc) == input_player:
+            elif choice_pc in losing.get(input_player):
+                print(f"Sorry, but the computer chose {choice_pc}.")
+            elif input_player in losing.get(choice_pc):
                 print(f"Well done. The computer chose {choice_pc} and failed.")
                 score += 100
+            else:
+                if win.get(choice_pc) == input_player:
+                    print(f"There is a draw ({choice_pc}).")
+                    score += 50
         elif input_player == "!exit":
             print("Bye!")
             break
