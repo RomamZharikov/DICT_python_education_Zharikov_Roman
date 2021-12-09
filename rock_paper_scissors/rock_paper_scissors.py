@@ -1,12 +1,13 @@
 from random import choice
 from math import floor, ceil
 
-with open("rating.txt", "r", encoding='utf-8') as rating:
-    score_table = {i: j for line in rating for i, j in [line.split()]}
-    rating.close()
-app = {}
-win = {}
-values = []
+app, win, values = {}, {}, []
+try:
+    with open("rating.txt", "r", encoding='utf-8') as rating:
+        score_table = {i: j for line in rating for i, j in [line.split()]}
+except FileNotFoundError:
+    with open("rating.txt", "w", encoding='utf-8') as rating:
+        pass
 
 
 def game_import():
@@ -17,7 +18,7 @@ def game_import():
         else:
             print("Please, input >3 values or nothing for base values")
     if len(link) != 0:
-        link = [*link.split(",")]
+        link = [str(i).strip().lower() for i in [*link.split(",")]]
         if len(link) % 2 == 1:
             for i in range(len(link)):
                 for j in range(((len(link)) - 1) // 2):
@@ -65,6 +66,10 @@ if __name__ == "__main__":
                     score += 50
         elif input_player == "!exit":
             print("Bye!")
+            score_table.update({name: score})
+            with open("rating.txt", "w+", encoding='utf-8') as rating:
+                for i in score_table.keys():
+                    rating.write(f"{i} {score_table.get(i)} \n")
             break
         elif input_player == "!rating":
             print(f"Your rating: {score}")
