@@ -7,7 +7,7 @@ try:
         score_table = {i: j for line in rating for i, j in [line.split()]}
 except FileNotFoundError:
     with open("rating.txt", "w", encoding='utf-8') as rating:
-        pass
+        score_table = {}
 
 
 def game_import():
