@@ -10,7 +10,9 @@ class SimplifiedMarkdownEditor(object):
             print("*" + j)
 
     def done(self):
-        pass
+        with open("output.md", "w", encoding='utf-8') as text:
+            self.edit = map(lambda k: k + "\n", self.edit)
+            text.writelines(self.edit)
 
     def header(self):
         while True:
