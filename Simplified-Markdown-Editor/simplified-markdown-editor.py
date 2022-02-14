@@ -1,8 +1,10 @@
 class SimplifiedMarkdownEditor(object):
-    def __init__(self):
-        self.command = ["plain", "bold", "italic", "header", "link", "inline-code",
+    def __init__(self, name, choice):
+        self.command = ["plain", "bold (in plain)", "italic (in plain)", "header", "link", "inline-code (in plain)",
                         "ordered-list", "unordered-list", "new-line"]
         self.edit = []
+        self.choice = choice
+        self.name = name
 
     def help(self):
         print("Available formatters:")
@@ -10,9 +12,24 @@ class SimplifiedMarkdownEditor(object):
             print("*" + j)
 
     def done(self):
-        with open("output.md", "w", encoding='utf-8') as text:
-            self.edit = map(lambda k: k + "\n", self.edit)
-            text.writelines(self.edit)
+        if overwrite == "yes" or overwrite == "y":
+            with open(self.name, "w", encoding='utf-8') as text:
+                self.edit = map(lambda k: k + "\n", self.edit)
+                text.writelines(self.edit)
+        else:
+            num = 1
+            check = self.name[0:-3]
+            while True:
+                self.name = f"{check}({num}).md"
+                try:
+                    with open(self.name, "r", encoding='utf-8') as q:
+                        pass
+                    num += 1
+                except FileNotFoundError:
+                    with open(self.name, "w", encoding='utf-8') as text:
+                        self.edit = map(lambda k: k + "\n", self.edit)
+                        text.writelines(self.edit)
+                    break
 
     def header(self):
         while True:
@@ -30,7 +47,26 @@ class SimplifiedMarkdownEditor(object):
                 print("The level should be within the range of 1 to 6.")
 
     def plain(self):
-        self.edit.append(input("Text: "))
+        text = input("Text: ")
+        while True:
+            append = input("\nUsed italic, bold or incline code(yes or no)? \n").strip().lower()
+            if append == "yes" or append == "y":
+                print(text)
+                piece = input("Enter the part of the text you want to change: \n")
+                action = input("What to use (italic, bold or incline code): \n").strip().lower()
+                if action == "italic":
+                    text = self.italic(text, piece)
+                elif action == "bold":
+                    text = self.bold(text, piece)
+                elif action == "incline code" or action == "ic":
+                    text = self.inline_code(text, piece)
+                else:
+                    print("Please, write italic or bold!")
+            elif append == "no" or append == "n":
+                break
+            else:
+                print("Please, write yes or no!")
+        self.edit.append(text)
 
     def new_line(self):
         self.edit.append("")
@@ -63,17 +99,28 @@ class SimplifiedMarkdownEditor(object):
         for k in range(len(append_list)):
             self.edit.append(f"* {append_list[k]}")
 
+    @staticmethod
+    def italic(text, piece):
+        return text.replace(piece, f"*{piece}*")
+
+    @staticmethod
+    def bold(text, piece):
+        return text.replace(piece, f"**{piece}**")
+
+    @staticmethod
+    def inline_code(text, piece):
+        return text.replace(piece, f"`{piece}`")
+
     def main(self):
-        print("=" * 70)
-        print("Welcome to the Simplified Markdown Editor!")
+        print("File processed successfully!")
         while True:
             if len(self.edit) == 0:
                 print("=" * 70)
                 formatter = input("Choose a formatter: \n").lower().strip()
             else:
                 print("=" * 70 + "\nYour text is:")
-                for i in self.edit:
-                    print(i)
+                for q in self.edit:
+                    print(q)
                 print("=" * 70)
                 formatter = input("Choose a formatter: \n").lower().strip()
             if formatter == "!help":
@@ -99,5 +146,35 @@ class SimplifiedMarkdownEditor(object):
 
 
 if __name__ == "__main__":
-    x = SimplifiedMarkdownEditor()
+    blacklist = ["~", "#", "%", "&", "*", "{", "}", "\\", ":", "<", ">", "?", "/", "+", "|", "\""]
+    print("=" * 70)
+    print("Welcome to the Simplified Markdown Editor!")
+    while True:
+        name_file = input("Enter the name of the future file: \n")
+        check_name = 0
+        for i in name_file:
+            if i in blacklist:
+                break
+            else:
+                check_name += 1
+        if check_name == len(name_file):
+            break
+        else:
+            print("Please, don't use symbols in the file name!")
+    if len(name_file) == 0:
+        name_file = "output.md"
+    else:
+        name_file += ".md"
+    try:
+        with open(name_file, "r", encoding='utf-8') as i:
+            pass
+        while True:
+            overwrite = input("Do you want to overwrite an existing file? \n").lower().strip()
+            if overwrite == "yes" or overwrite == "no" or overwrite == "y" or overwrite == "n":
+                break
+            else:
+                print("Please, write yes or no.")
+    except FileNotFoundError:
+        overwrite = "yes"
+    x = SimplifiedMarkdownEditor(name_file, overwrite)
     x.main()
