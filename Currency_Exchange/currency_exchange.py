@@ -1,11 +1,22 @@
+from parse import Parse
+from json import JSONDecodeError
+
+
 class CurrencyExchange:
-    def __init__(self, my_coin):
-        self.my_coin = my_coin
-        self.rate = [[0.82, "ARS"], [0.17, "HNL"], [1.9622, "AUD"], [0.208, "MAD"]]
+    def __init__(self, current_code):
+        self.code = current_code
+        self.my_coin = 0
 
     def conversion(self):
-        for i in self.rate:
-            print(f"I will get {round(i[0] * self.my_coin, 2)} {i[1]} from the sale of {self.my_coin} my_coins.")
+        while True:
+            try:
+                rate = Parse(self.code).request()
+                break
+            except JSONDecodeError:
+                print("Please, enter a valid currency code")
+                self.code = input("Please, enter currency code: ")
+        for i in rate:
+            print(f"The {self.code.upper()} to {i[0].upper()} exchange rate is {i[1]}")
 
 
 def value_error(string):
@@ -18,6 +29,6 @@ def value_error(string):
 
 
 if __name__ == "__main__":
-    coin = value_error("Please, enter the number of my_coins you have: ")
-    a = CurrencyExchange(coin)
+    code = input("Please, enter currency code: ")
+    a = CurrencyExchange(code)
     a.conversion()
