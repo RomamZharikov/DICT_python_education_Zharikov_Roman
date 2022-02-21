@@ -1,10 +1,11 @@
 class CurrencyExchange:
-    def __init__(self, my_coin, rate):
+    def __init__(self, my_coin):
         self.my_coin = my_coin
-        self.rate = rate
+        self.rate = [[0.82, "ARS"], [0.17, "HNL"], [1.9622, "AUD"], [0.208, "MAD"]]
 
     def conversion(self):
-        return self.my_coin * self.rate
+        for i in self.rate:
+            print(f"I will get {round(i[0] * self.my_coin, 2)} {i[1]} from the sale of {self.my_coin} my_coins.")
 
 
 def value_error(string):
@@ -18,6 +19,5 @@ def value_error(string):
 
 if __name__ == "__main__":
     coin = value_error("Please, enter the number of my_coins you have: ")
-    exchange_rate = value_error("Please, enter the exchange rate: ")
-    a = CurrencyExchange(coin, exchange_rate)
-    print(f"The total amount of dollars: {a.conversion()}")
+    a = CurrencyExchange(coin)
+    a.conversion()
